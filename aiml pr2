@@ -1,0 +1,60 @@
+# Tree
+tree = {
+    'A': ['B', 'C'],
+    'B': ['D', 'E'],
+    'C': ['F', 'G'],
+    'D': ['H', 'I'],
+    'E': [],
+    'F': [],
+    'G': [],
+    'H': [],
+    'I': []
+}
+
+# BFS Function
+def bfs(start):
+    visited = []
+    queue = [start]
+
+    while queue:
+        node = queue.pop(0)
+
+        if node not in visited:
+            visited.append(node)
+
+            for child in tree[node]:
+                queue.append(child)
+
+    return visited
+
+# DFS Function
+def dfs(node, visited):
+    visited.append(node)
+
+    for child in tree[node]:
+        if child not in visited:
+            dfs(child, visited)
+
+# Main Program
+print("TREE\n")
+
+print("          A")
+print("        /   \\")
+print("       B     C")
+print("      / \\   / \\")
+print("     D   E F   G")
+print("    / \\")
+print("   H   I")
+
+# BFS
+bfs_result = bfs('A')
+
+print("\nBFS Traversal:")
+print(" -> ".join(bfs_result))
+
+# DFS
+dfs_result = []
+dfs('A', dfs_result)
+
+print("\nDFS Traversal:")
+print(" -> ".join(dfs_result))
