@@ -1,0 +1,32 @@
+# PR1: Intelligent Agent and PEAS Representation
+
+# PEAS Representation
+print("PEAS REPRESENTATION")
+print("Performance Measure: Comfort, safety and energy saving")
+print("Environment: Smart Home")
+print("Actuators: Fan, Light and AC")
+print("Sensors: Temperature and Light Sensor")
+
+# Sensor Inputs
+temperature = 32
+light = "dark"
+
+print("\nSMART HOME AGENT")
+
+# Agent Behavior
+if temperature > 30:
+    print("Fan: ON")
+else:
+    print("Fan: OFF")
+
+if temperature > 35:
+    print("AC: ON")
+else:
+    print("AC: OFF")
+
+if light == "dark":
+    print("Light: ON")
+else:
+    print("Light: OFF")
+
+print("\nAgent completed its decision.")
