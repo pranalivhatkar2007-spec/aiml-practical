@@ -1,0 +1,53 @@
+# PR8: Decision Tree and Naive Bayes
+
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import accuracy_score, confusion_matrix
+
+# Load dataset
+data = load_iris()
+X = data.data
+y = data.target
+
+# Split dataset
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# Decision Tree
+dt = DecisionTreeClassifier(max_depth=3, random_state=42)
+dt.fit(X_train, y_train)
+dt_pred = dt.predict(X_test)
+
+print("Decision Tree Accuracy:",
+      accuracy_score(y_test, dt_pred))
+
+# Naive Bayes
+nb = GaussianNB()
+nb.fit(X_train, y_train)
+nb_pred = nb.predict(X_test)
+
+print("Naive Bayes Accuracy:",
+      accuracy_score(y_test, nb_pred))
+
+# Confusion Matrix
+print("\nDecision Tree Confusion Matrix:")
+print(confusion_matrix(y_test, dt_pred))
+
+print("\nNaive Bayes Confusion Matrix:")
+print(confusion_matrix(y_test, nb_pred))
+
+# Display Decision Tree
+plt.figure(figsize=(14, 8))
+plot_tree(
+    dt,
+    feature_names=data.feature_names,
+    class_names=data.target_names,
+    filled=True,
+    rounded=True
+)
+plt.title("Decision Tree Visualization")
+plt.show()
