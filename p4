@@ -3,26 +3,29 @@
 facts = {'fever', 'cough'}
 
 rules = [
-    (['fever', 'cough'], 'possible_flu'),
-    (['possible_flu'], 'take_rest')
+    ({'fever', 'cough'}, 'possible_flu'),
+    ({'possible_flu'}, 'take_rest')
 ]
 
+
+# Forward Chaining
 def forward():
     known = set(facts)
+    changed = True
 
-    change = True
-    while change:
-        change = False
+    while changed:
+        changed = False
 
         for conditions, result in rules:
-            if all(x in known for x in conditions):
+            if conditions.issubset(known):
                 if result not in known:
                     known.add(result)
-                    change = True
+                    changed = True
 
     return known
 
 
+# Backward Chaining
 def backward(goal):
     if goal in facts:
         return True
@@ -34,5 +37,6 @@ def backward(goal):
     return False
 
 
+print("Facts:", facts)
 print("Forward Chaining:", forward())
 print("Backward Chaining:", backward('take_rest'))
