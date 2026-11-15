@@ -1,0 +1,49 @@
+# PR12: Disease Prediction using Random Forest
+
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, confusion_matrix
+
+# Load dataset
+data = load_breast_cancer()
+X = data.data
+y = data.target
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+
+# Create and train model
+model = RandomForestClassifier(random_state=42)
+model.fit(X_train, y_train)
+
+# Prediction before optimization
+pred = model.predict(X_test)
+print("Accuracy Before:", accuracy_score(y_test, pred))
+
+# Optimize model
+params = {
+    'n_estimators': [50, 100],
+    'max_depth': [3, 5, None]
+}
+
+grid = GridSearchCV(model, params, cv=5)
+grid.fit(X_train, y_train)
+
+# Prediction after optimization
+best_model = grid.best_estimator_
+pred = best_model.predict(X_test)
+
+print("Best Parameters:", grid.best_params_)
+print("Accuracy After:", accuracy_score(y_test, pred))
+
+# Confusion Matrix
+print("Confusion Matrix:")
+print(confusion_matrix(y_test, pred))
+
+# Sample prediction
+print("Prediction:", data.target_names[pred[0]])
+
+print("PR12 Completed Successfully!")
