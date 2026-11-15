@@ -1,74 +1,89 @@
 # PR3: Greedy and A* Search
 
 import heapq
+import time
 
 graph = {
     'A': [('B', 1), ('C', 4)],
     'B': [('D', 2), ('E', 5)],
     'C': [('F', 2)],
-    'D': [('G', 3)],
-    'E': [('G', 1)],
+    'D': [('G', 5)],
+    'E': [('G', 2)],
     'F': [('G', 3)],
     'G': []
 }
 
 h = {
-    'A': 5, 'B': 4, 'C': 3,
-    'D': 2, 'E': 1, 'F': 2, 'G': 0
+    'A': 6, 'B': 5, 'C': 4,
+    'D': 5, 'E': 2, 'F': 3, 'G': 0
 }
 
 
 def greedy(start, goal):
-    queue = [(h[start], start, [start])]
+    q = [(h[start], start, [start])]
     visited = []
+    count = 0
 
-    while queue:
-        _, node, path = heapq.heappop(queue)
+    while q:
+        _, node, path = heapq.heappop(q)
+
+        if node in visited:
+            continue
+
+        visited.append(node)
+        count += 1
 
         if node == goal:
-            return path
+            return path, count
 
-        if node not in visited:
-            visited.append(node)
+        for n, cost in graph[node]:
+            if n not in visited:
+                heapq.heappush(q, (h[n], n, path + [n]))
 
-            for n, cost in graph[node]:
-                if n not in visited:
-                    heapq.heappush(
-                        queue, (h[n], n, path + [n])
-                    )
-
-    return None
+    return None, count
 
 
 def astar(start, goal):
-    queue = [(h[start], 0, start, [start])]
+    q = [(h[start], 0, start, [start])]
     best = {start: 0}
+    count = 0
 
-    while queue:
-        f, g, node, path = heapq.heappop(queue)
-
-        if node == goal:
-            return path, g
+    while q:
+        f, g, node, path = heapq.heappop(q)
 
         if g != best[node]:
             continue
+
+        count += 1
+
+        if node == goal:
+            return path, g, count
 
         for n, cost in graph[node]:
             new_g = g + cost
 
             if new_g < best.get(n, float('inf')):
                 best[n] = new_g
-                new_f = new_g + h[n]
-
                 heapq.heappush(
-                    queue, (new_f, new_g, n, path + [n])
+                    q, (new_g + h[n], new_g, n, path + [n])
                 )
 
-    return None, float('inf')
+    return None, float('inf'), count
 
 
-print("Greedy Path:", greedy('A', 'G'))
+t1 = time.time()
+g_path, g_count = greedy('A', 'G')
+g_time = time.time() - t1
 
-path, cost = astar('A', 'G')
-print("A* Path:", path)
-print("A* Cost:", cost)
+t2 = time.time()
+a_path, a_cost, a_count = astar('A', 'G')
+a_time = time.time() - t2
+
+print("Greedy Path:", g_path)
+print("Greedy Nodes:", g_count)
+print("Greedy Time:", g_time)
+
+print("\nA* Path:", a_path)
+print("A* Cost:", a_cost)
+print("A* Nodes:", a_count)
+print("A* Time:", a_time)
