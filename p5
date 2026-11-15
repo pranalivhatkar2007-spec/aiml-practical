@@ -1,0 +1,64 @@
+# PR5: Data Preprocessing and EDA
+
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+# Load dataset
+df = sns.load_dataset('titanic')
+
+# Select columns
+df = df[['survived', 'pclass', 'sex', 'age',
+         'sibsp', 'parch', 'fare', 'embarked']]
+
+# Handle missing values
+df['age'] = df['age'].fillna(df['age'].median())
+df['fare'] = df['fare'].fillna(df['fare'].median())
+df['embarked'] = df['embarked'].fillna(
+    df['embarked'].mode()[0]
+)
+
+# Remove duplicate rows
+df = df.drop_duplicates()
+
+print("First five rows:")
+print(df.head())
+
+print("\nMissing values:")
+print(df.isnull().sum())
+
+print("\nStatistics:")
+print(df.describe())
+
+# Encode categorical columns
+df = pd.get_dummies(
+    df, columns=['sex', 'embarked'], drop_first=True
+)
+
+# Separate input and output
+X = df.drop('survived', axis=1)
+y = df['survived']
+
+# Split dataset
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# Feature scaling
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+print("\nTraining data:", X_train.shape)
+print("Testing data:", X_test.shape)
+
+# Histogram
+df.hist(figsize=(10, 8))
+plt.tight_layout()
+plt.show()
+
+# Boxplot
+sns.boxplot(data=df.select_dtypes(include='number'))
+plt.show()
